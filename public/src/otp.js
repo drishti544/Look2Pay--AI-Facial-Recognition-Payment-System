@@ -1,6 +1,5 @@
 function verifyOTP() {
-    let otp =
-        document.getElementById("otp").value;
+    let otp = document.getElementById("otp").value;
 
     if (otp !== "1234") {
         alert("Invalid OTP");
@@ -34,7 +33,7 @@ function verifyOTP() {
     localStorage.removeItem("pendingAmount");
     localStorage.removeItem("pendingMerchant");
 
-    alert("OTP Verified. Payment Successful!");
+    alert("OTP Verified Successfully!");
 
-    window.location.href = "transaction.html";
+    window.location.href = "./transaction.html";
 }

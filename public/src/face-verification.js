@@ -192,28 +192,73 @@ async function startFaceRecognition() {
 
 //-----------------------------------------Forwarding for payment response--------------------------------------------//
 function makePayment() {
-  payFromFacePageOnly = true;
-  if (faceLabel == "known" && faceScore <= 0.45) {
-    faceVerified = true;
-    swal(`${currentUser.fullname}, you are now verified!`, "Press the pay button to make payment.", "success")
-    message.innerText = "Press the 'Pay' button to make payment."
-    startBtn.innerText = "Pay"
-    startBtn.classList.add('pay-btn')
-    startBtn.onclick = () => window.location.replace("./payment.html")
-  }
+    payFromFacePageOnly = true;
 
-  else if (faceLabel == "known" && faceScore > 0.45) {
-    faceVerified = false;
-    message.innerText = `Try again! we want to be more sure that it's ${currentUser.fullname}.`
-  }
-  
-  else {
-    faceVerified = false;
-    swal("Verification Failed!", "Face was not matched with the profile", "error").then(function() {
-      window.location.replace('./payment.html')
-    }) 
-  }
+    // SUCCESS CASE
+    if (faceLabel == "known" && faceScore <= 0.45) {
+        faceVerified = true;
 
-  sessionStorage.setItem('payFromFacePageOnly', payFromFacePageOnly);
-  sessionStorage.setItem('faceVerified', faceVerified);
+        sessionStorage.setItem(
+            "payFromFacePageOnly",
+            payFromFacePageOnly
+        );
+
+        sessionStorage.setItem(
+            "faceVerified",
+            faceVerified
+        );
+
+        swal(
+            `${currentUser.fullname}, Face Verification Successful!`,
+            "Proceed to secure payment portal.",
+            "success"
+        ).then(function () {
+            window.location.replace("./payment.html");
+        });
+    }
+
+    // LOW CONFIDENCE MATCH
+    else if (
+        faceLabel == "known" &&
+        faceScore > 0.45
+    ) {
+        faceVerified = false;
+
+        sessionStorage.setItem(
+            "faceVerified",
+            faceVerified
+        );
+
+        message.innerText =
+            `Verification confidence is low. Please try again for better accuracy.`;
+
+        swal(
+            "Verification Retry Required",
+            "Face matched with low confidence score. Please try again.",
+            "warning"
+        );
+    }
+
+    // COMPLETE FAILURE
+    else {
+        faceVerified = false;
+
+        sessionStorage.setItem(
+            "payFromFacePageOnly",
+            payFromFacePageOnly
+        );
+
+        sessionStorage.setItem(
+            "faceVerified",
+            faceVerified
+        );
+
+        swal(
+            "Verification Failed!",
+            "Face did not match registered profile.",
+            "error"
+        ).then(function () {
+            window.location.replace("./payment.html");
+        });
+    }
 }
